@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<title>Fire TV Lite Hub</title>
+<style>
+:root{color-scheme:dark;--bg:#080b12;--panel:#111827;--muted:#9ca3af;--accent:#60a5fa}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#18243a 0%,var(--bg) 58%);color:#f8fafc;font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+button,a{font:inherit}
+button:focus-visible,a:focus-visible,.tile:focus-visible{outline:3px solid #93c5fd;outline-offset:4px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 5vw}
+.brand{font-size:clamp(20px,3vw,30px);font-weight:800;letter-spacing:-.7px}
+.brand span{color:#60a5fa}
+.status{font-size:12px;color:#a7f3d0;border:1px solid #24594d;background:#102b26;padding:8px 12px;border-radius:30px}
+main{max-width:1200px;margin:auto;padding:24px 5vw 56px}
+.eyebrow{font-size:12px;letter-spacing:2px;color:#93c5fd;text-transform:uppercase;font-weight:bold}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.06;margin:12px 0}
+.intro{color:#aebbd0;line-height:1.6;max-width:620px;margin:12px 0 30px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.tile{border:1px solid #29364b;background:linear-gradient(145deg,#172235,#101522);border-radius:20px;padding:22px;text-align:left;color:#fff;min-height:190px;cursor:pointer;transition:transform .15s,border-color .15s;display:flex;flex-direction:column;align-items:flex-start}
+.tile:hover,.tile:focus-visible{transform:translateY(-3px);border-color:#7db6ff}
+.tile-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;font-size:25px;margin-bottom:22px}
+.tile h2{font-size:21px;margin:0 0 8px}
+.tile p{color:#aebbd0;font-size:14px;line-height:1.5;margin:0}
+.arrow{margin-top:auto;padding-top:18px;color:#93c5fd;font-size:13px;font-weight:bold}
+.note{margin-top:25px;padding:15px 17px;background:#101827;border:1px solid #26344a;border-radius:14px;color:#aebbd0;font-size:13px;line-height:1.6}
+footer{text-align:center;color:#718096;font-size:12px;padding:0 20px 25px}
+#viewer{display:none}
+.viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 15px}
+.viewer-head h2{margin:0;font-size:24px}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.action{border:1px solid #34435a;background:#172235;color:#fff;padding:11px 15px;border-radius:10px;cursor:pointer}
+.action.primary{background:#2563eb;border-color:#2563eb}
+.sources{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.source{border:1px solid #334155;background:#111827;color:#cbd5e1;padding:10px 14px;border-radius:10px;cursor:pointer}
+.source.active{background:#1d4ed8;border-color:#60a5fa;color:white}
+#frameWrap{height:min(68vh,650px);min-height:330px;background:#000;border:1px solid #334155;border-radius:15px;overflow:hidden}
+iframe{width:100%;height:100%;border:0;background:#000}
+.frame-note{color:#aebbd0;font-size:13px;line-height:1.6;margin-top:12px}
+#notice{display:none;margin:12px 0;padding:12px;border-radius:10px;background:#302318;color:#fed7aa;font-size:13px;line-height:1.5}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.tile{min-height:145px}.tile-icon{margin-bottom:14px}header{padding:18px 5vw}main{padding-top:18px}#frameWrap{min-height:300px;height:58vh}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">FIRE TV <span>LITE HUB</span></div>
+  <div class="status">● HUB READY</div>
+</header>
+<main>
+  <section id="home">
+    <div class="eyebrow">Your entertainment dashboard</div>
+    <h1>Everything.<br>In one place.</h1>
+    <p class="intro">A lightweight hub designed for a big screen. Choose a destination to get started.</p>
+    <div class="grid">
+      <button class="tile" data-tile="yt" style="border-top:3px solid #ef4444">
+        <span class="tile-icon" style="background:#451a1a">▶</span>
+        <h2>YouTube TV</h2>
+        <p>Open the TV-friendly YouTube experience.</p>
+        <span class="arrow">OPEN DESTINATION →</span>
+      </button>
+      <button class="tile" data-tile="cricket" style="border-top:3px solid #22c55e">
+        <span class="tile-icon" style="background:#123522">🏏</span>
+        <h2>Cricket Centre</h2>
+        <p>Live scores, match centres and cricket updates.</p>
+        <span class="arrow">VIEW SOURCES →</span>
+      </button>
+      <button class="tile" data-tile="home" style="border-top:3px solid #2dd4bf">
+        <span class="tile-icon" style="background:#103a39">🎬</span>
+        <h2>My Media Server</h2>
+        <p>Choose one of your saved media website destinations.</p>
+        <span class="arrow">VIEW SOURCES →</span>
+      </button>
+    </div>
+    <div class="note"><strong>Quick tip:</strong> On a TV, use the remote's arrow keys to move and Enter/OK to select. If a website refuses to load inside the panel, that website may block embedding.</div>
+  </section>
+
+  <section id="viewer">
+    <div class="viewer-head">
+      <h2 id="viewerTitle">Destination</h2>
+      <div class="actions">
+        <button class="action" id="backBtn">← Home</button>
+        <button class="action primary" id="reloadBtn">Reload</button>
+      </div>
+    </div>
+    <div class="sources" id="sources"></div>
+    <div id="notice">This website may prevent embedded viewing. Try another source, or use “Open full page” to navigate to it in this tab. This hub cannot bypass website restrictions.</div>
+    <div id="frameWrap"><iframe id="contentFrame" title="Selected website" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+    <div class="actions" style="margin-top:12px">
+      <button class="action primary" id="fullPageBtn">Open full page</button>
+    </div>
+    <p class="frame-note">Playback depends on the selected website, your connection, and its browser/device support. Some sites do not permit loading inside another page.</p>
+  </section>
+</main>
+<footer>Fire TV Lite Hub · Lightweight web dashboard</footer>
+<script>
+const destinations = {
+  yt: {
+    title: "YouTube TV",
+    urls: [
+      {label:"YouTube TV", url:"https://www.youtube.com/tv"}
+    ]
+  },
+  cricket: {
+    title: "Cricket Centre",
+    urls: [
+      {label:"Cricbuzz", url:"https://www.cricbuzz.com/cricket-match/live-scores"},
+      {label:"ESPNcricinfo", url:"https://www.espncricinfo.com/live-cricket-score"},
+      {label:"AllRounderLive", url:"https://allrounderlive.in/"}
+    ]
+  },
+  home: {
+    title: "My Media Server",
+    urls: [
+      {label:"Arise STR", url:"https://arise-str.vercel.app/"},
+      {label:"HiCine", url:"https://hicine.biz/"},
+      {label:"AutoEmbed", url:"https://watch-v2.autoembed.app/watch/tv"}
+    ]
+  }
+};
+let currentTile = null;
+let currentUrl = "";
+const home = document.getElementById("home");
+const viewer = document.getElementById("viewer");
+const viewerTitle = document.getElementById("viewerTitle");
+const sources = document.getElementById("sources");
+const frame = document.getElementById("contentFrame");
+const notice = document.getElementById("notice");
+function loadSource(item, button) {
+  currentUrl = item.url;
+  frame.src = item.url;
+  document.querySelectorAll(".source").forEach(el => el.classList.remove("active"));
+  if (button) button.classList.add("active");
+  notice.style.display = "block";
+}
+function openTile(id) {
+  const item = destinations[id];
+  if (!item) return;
+  currentTile = id;
+  home.style.display = "none";
+  viewer.style.display = "block";
+  viewerTitle.textContent = item.title;
+  sources.replaceChildren();
+  item.urls.forEach((urlItem, index) => {
+    const button = document.createElement("button");
+    button.className = "source";
+    button.textContent = urlItem.label;
+    button.addEventListener("click", () => loadSource(urlItem, button));
+    sources.appendChild(button);
+    if (index === 0) loadSource(urlItem, button);
+  });
+  document.getElementById("backBtn").focus();
+}
+function goHome() {
+  frame.src = "about:blank";
+  currentTile = null;
+  currentUrl = "";
+  viewer.style.display = "none";
+  home.style.display = "block";
+  const first = document.querySelector(".tile");
+  if (first) first.focus();
+}
+document.querySelectorAll(".tile").forEach(button => {
+  button.addEventListener("click", () => openTile(button.dataset.tile));
+});
+document.getElementById("backBtn").addEventListener("click", goHome);
+document.getElementById("reloadBtn").addEventListener("click", () => {
+  if (currentUrl) frame.src = currentUrl;
+});
+document.getElementById("fullPageBtn").addEventListener("click", () => {
+  if (currentUrl) window.location.href = currentUrl;
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" || event.key === "Backspace") {
+    if (viewer.style.display === "block") {
+      event.preventDefault();
+      goHome();
+    }
+  }
+});
+</script>
+</body>
+</html>
