@@ -2,59 +2,84 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080b12">
 <title>Fire TV Lite Hub</title>
 <style>
-:root{color-scheme:dark;--bg:#080b12;--panel:#111827;--muted:#aebbd0;--accent:#60a5fa}
+:root{color-scheme:dark;--bg:#080b12;--muted:#aebbd0;--blue:#60a5fa}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#1b2941 0%,var(--bg) 60%);color:#f8fafc;font-family:Arial,Helvetica,sans-serif}
-button{font:inherit;cursor:pointer}
+button{font:inherit;cursor:pointer;color:inherit}
 button:focus-visible{outline:3px solid #93c5fd;outline-offset:4px}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:22px 5vw}
+header{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:22px 5vw}
 .brand{font-size:clamp(20px,3vw,30px);font-weight:800;letter-spacing:-.6px}
-.brand span{color:#60a5fa}
+.brand span{color:var(--blue)}
+.header-actions,.actions,.sources{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .status{font-size:12px;color:#a7f3d0;background:#102b26;border:1px solid #24594d;padding:8px 12px;border-radius:30px}
 main{max-width:1200px;margin:auto;padding:24px 5vw 55px}
 .eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#93c5fd;font-weight:bold}
 h1{font-size:clamp(32px,5vw,54px);line-height:1.06;margin:12px 0}
 .intro{color:var(--muted);line-height:1.65;max-width:650px;margin:12px 0 30px}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.tile{display:flex;flex-direction:column;align-items:flex-start;text-align:left;color:#fff;background:linear-gradient(145deg,#19263a,#101522);border:1px solid #29364b;border-top:3px solid var(--tile-color,#60a5fa);border-radius:20px;padding:22px;min-height:190px;transition:transform .15s,border-color .15s}
+.tile{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:linear-gradient(145deg,#19263a,#101522);border:1px solid #29364b;border-top:3px solid var(--tile-color,#60a5fa);border-radius:20px;padding:22px;min-height:190px;transition:transform .15s,border-color .15s}
 .tile:hover,.tile:focus-visible{transform:translateY(-3px);border-color:#7db6ff}
 .tile-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;font-size:25px;margin-bottom:20px;background:#24334b}
 .tile h2{font-size:21px;margin:0 0 8px}
 .tile p{color:var(--muted);font-size:14px;line-height:1.5;margin:0}
 .arrow{padding-top:18px;margin-top:auto;color:#93c5fd;font-size:13px;font-weight:bold}
 .note{margin-top:25px;padding:15px 17px;background:#101827;border:1px solid #26344a;border-radius:14px;color:var(--muted);font-size:13px;line-height:1.6}
+.action,.source{border:1px solid #34435a;background:#172235;padding:11px 15px;border-radius:10px}
+.action.primary,.source.active{background:#1d4ed8;border-color:#60a5fa}
 #viewer{display:none}
 .viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}
 .viewer-head h2{font-size:24px;margin:0}
-.actions,.sources{display:flex;gap:9px;flex-wrap:wrap}
-.action,.source{border:1px solid #34435a;background:#172235;color:#fff;padding:11px 15px;border-radius:10px}
-.action.primary,.source.active{background:#1d4ed8;border-color:#60a5fa}
 #notice{display:none;margin:12px 0;padding:12px;border-radius:10px;background:#302318;color:#fed7aa;font-size:13px;line-height:1.5}
 #frameWrap{height:min(68vh,650px);min-height:320px;margin-top:14px;background:#000;border:1px solid #334155;border-radius:15px;overflow:hidden}
 iframe{width:100%;height:100%;border:0;background:#000}
 .frame-note{color:var(--muted);font-size:13px;line-height:1.6;margin-top:12px}
 .error{padding:18px;border:1px solid #713f3f;background:#301b22;color:#fecaca;border-radius:12px;line-height:1.6}
 footer{text-align:center;color:#718096;font-size:12px;padding:0 20px 25px}
-@media(max-width:760px){.grid{grid-template-columns:1fr}.tile{min-height:145px}.tile-icon{margin-bottom:14px}header{padding:18px 5vw}main{padding-top:18px}#frameWrap{height:58vh;min-height:290px}}
+
+/* Low Effects mode: applies to this hub, not cross-origin iframe contents. */
+html.low-effects *,
+html.low-effects *::before,
+html.low-effects *::after{
+ animation:none!important;
+ transition:none!important;
+ scroll-behavior:auto!important;
+ caret-color:transparent!important;
+}
+html.low-effects{scroll-behavior:auto!important}
+html.low-effects .tile:hover,
+html.low-effects .tile:focus-visible{transform:none!important}
+@media(max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .tile{min-height:145px}
+ .tile-icon{margin-bottom:14px}
+ header{padding:18px 5vw}
+ main{padding-top:18px}
+ #frameWrap{height:58vh;min-height:290px}
+}
 </style>
 </head>
 <body>
 <header>
   <div class="brand">FIRE TV <span>LITE HUB</span></div>
-  <div class="status" id="status">● LOADING</div>
+  <div class="header-actions">
+    <button class="action" id="effectsToggle" aria-pressed="false">⚡ Low Effects: OFF</button>
+    <div class="status" id="status">● LOADING</div>
+  </div>
 </header>
+
 <main>
   <section id="home">
     <div class="eyebrow">Your entertainment dashboard</div>
     <h1>Everything.<br>In one place.</h1>
     <p class="intro" id="intro">Loading your hub configuration...</p>
     <div class="grid" id="grid"></div>
-    <div class="note"><strong>Remote tip:</strong> Use your remote's arrow keys to navigate and OK/Enter to select. Some websites block embedded viewing; this hub cannot override those restrictions.</div>
+    <div class="note"><strong>Remote tip:</strong> Use the remote arrow keys to move between controls and OK/Enter to select. Some third-party websites block embedded viewing.</div>
   </section>
+
   <section id="viewer">
     <div class="viewer-head">
       <h2 id="viewerTitle">Destination</h2>
@@ -64,176 +89,163 @@ footer{text-align:center;color:#718096;font-size:12px;padding:0 20px 25px}
       </div>
     </div>
     <div class="sources" id="sources"></div>
-    <div id="notice">If this website does not load here, it may block embedded viewing or require a supported browser. Try another source or use Open full page.</div>
+    <div id="notice">If this page does not load, the website may block embedding or require a supported browser. Try another source or use Open full page.</div>
     <div id="frameWrap"><iframe id="contentFrame" title="Selected website" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
     <div class="actions" style="margin-top:12px">
       <button class="action primary" id="fullPageBtn">Open full page</button>
     </div>
-    <p class="frame-note">Playback depends on the website, your connection and device support. Some sites do not allow loading inside another page.</p>
+    <p class="frame-note">Playback depends on website, network and device support. This web version cannot force third-party sites to allow embedding.</p>
   </section>
 </main>
-<footer>Fire TV Lite Hub · Config-driven dashboard</footer>
+<footer>Fire TV Lite Hub · Lightweight dashboard</footer>
+
 <script>
-let destinations = {};
-let currentUrl = "";
-let configLoaded = false;
+let destinations={};
+let currentUrl="";
+const home=document.getElementById("home");
+const viewer=document.getElementById("viewer");
+const grid=document.getElementById("grid");
+const intro=document.getElementById("intro");
+const statusEl=document.getElementById("status");
+const frame=document.getElementById("contentFrame");
+const sources=document.getElementById("sources");
+const notice=document.getElementById("notice");
+const viewerTitle=document.getElementById("viewerTitle");
+const effectsToggle=document.getElementById("effectsToggle");
 
-const home = document.getElementById("home");
-const viewer = document.getElementById("viewer");
-const grid = document.getElementById("grid");
-const intro = document.getElementById("intro");
-const statusEl = document.getElementById("status");
-const frame = document.getElementById("contentFrame");
-const sources = document.getElementById("sources");
-const notice = document.getElementById("notice");
-const viewerTitle = document.getElementById("viewerTitle");
+const iconMap={youtube:"▶",cricket:"🏏",film:"🎬",sports:"🏆",music:"🎵",tv:"📺",game:"🎮"};
 
-const iconMap = {
-  youtube:"▶",
-  cricket:"🏏",
-  film:"🎬",
-  sports:"🏆",
-  music:"🎵",
-  tv:"📺",
-  game:"🎮"
-};
-
-function safeColor(color) {
-  return typeof color === "string" && /^#[0-9a-fA-F]{3,8}$/.test(color)
-    ? color : "#60a5fa";
+function safeColor(value){
+ return typeof value==="string"&&/^#[0-9a-fA-F]{3,8}$/.test(value)?value:"#60a5fa";
+}
+function validWebUrl(value){
+ try{
+  const url=new URL(value);
+  return url.protocol==="https:"||url.protocol==="http:";
+ }catch{return false;}
 }
 
-function validWebUrl(value) {
-  try {
-    const parsed = new URL(value);
-    return parsed.protocol === "https:" || parsed.protocol === "http:";
-  } catch {
-    return false;
+async function loadConfig(){
+ try{
+  const response=await fetch("./config.json?v="+Date.now(),{cache:"no-store"});
+  if(!response.ok)throw new Error("HTTP "+response.status);
+  const config=await response.json();
+  if(!Array.isArray(config.tiles))throw new Error("Missing tiles array");
+
+  if(config.maintenance&&config.maintenance.enabled){
+   intro.textContent=config.maintenance.message||"We'll be back soon!";
+   grid.replaceChildren();
+   statusEl.textContent="● MAINTENANCE";
+   return;
   }
-}
 
-async function loadConfig() {
-  try {
-    const response = await fetch("./config.json?v=" + Date.now(), {
-      cache: "no-store"
-    });
-    if (!response.ok) throw new Error("HTTP " + response.status);
+  destinations={};
+  grid.replaceChildren();
 
-    const config = await response.json();
-    if (!Array.isArray(config.tiles)) {
-      throw new Error("The config needs a tiles array.");
-    }
+  for(const tile of config.tiles){
+   if(!tile||!tile.id||!tile.title||!Array.isArray(tile.urls))continue;
+   const urls=tile.urls.filter(validWebUrl).map(url=>({
+    label:tile.urls.length>1?new URL(url).hostname.replace(/^www\./,""):tile.title,
+    url
+   }));
+   if(!urls.length)continue;
+   destinations[tile.id]={title:tile.title,urls};
 
-    if (config.maintenance && config.maintenance.enabled) {
-      intro.textContent = config.maintenance.message || "We'll be back soon!";
-      grid.replaceChildren();
-      statusEl.textContent = "● MAINTENANCE";
-      configLoaded = true;
-      return;
-    }
+   const button=document.createElement("button");
+   button.className="tile";
+   button.dataset.tile=tile.id;
+   button.style.setProperty("--tile-color",safeColor(tile.color));
 
-    destinations = {};
-    grid.replaceChildren();
+   const icon=document.createElement("span");
+   icon.className="tile-icon";
+   icon.textContent=iconMap[tile.icon]||"📺";
+   icon.style.background=safeColor(tile.color)+"30";
 
-    for (const tile of config.tiles) {
-      if (!tile || !tile.id || !tile.title || !Array.isArray(tile.urls)) continue;
+   const title=document.createElement("h2");
+   title.textContent=tile.title;
+   const subtitle=document.createElement("p");
+   subtitle.textContent=tile.subtitle||"";
+   const arrow=document.createElement("span");
+   arrow.className="arrow";
+   arrow.textContent="OPEN DESTINATION →";
 
-      const urls = tile.urls
-        .filter(validWebUrl)
-        .map(url => ({
-          label: tile.urls.length > 1
-            ? new URL(url).hostname.replace(/^www\./, "")
-            : tile.title,
-          url
-        }));
-
-      if (!urls.length) continue;
-
-      destinations[tile.id] = { title: tile.title, urls };
-
-      const button = document.createElement("button");
-      button.className = "tile";
-      button.style.setProperty("--tile-color", safeColor(tile.color));
-      button.dataset.tile = tile.id;
-
-      const icon = document.createElement("span");
-      icon.className = "tile-icon";
-      icon.textContent = iconMap[tile.icon] || "📺";
-      icon.style.background = safeColor(tile.color) + "30";
-
-      const title = document.createElement("h2");
-      title.textContent = tile.title;
-
-      const subtitle = document.createElement("p");
-      subtitle.textContent = tile.subtitle || "";
-
-      const arrow = document.createElement("span");
-      arrow.className = "arrow";
-      arrow.textContent = "OPEN DESTINATION →";
-
-      button.append(icon, title, subtitle, arrow);
-      button.addEventListener("click", () => openTile(tile.id));
-      grid.appendChild(button);
-    }
-
-    if (!grid.children.length) throw new Error("No valid tiles found.");
-    intro.textContent = "Your favourite destinations, all together. Choose a tile to get started.";
-    statusEl.textContent = "● HUB READY";
-    configLoaded = true;
-  } catch (error) {
-    console.error("Config loading failed:", error);
-    statusEl.textContent = "● CONFIG ERROR";
-    intro.innerHTML = "";
-    const message = document.createElement("div");
-    message.className = "error";
-    message.textContent = "Could not load config.json. Check that the file is committed in the same repository and is valid JSON. Then refresh this page.";
-    intro.appendChild(message);
+   button.append(icon,title,subtitle,arrow);
+   button.addEventListener("click",()=>openTile(tile.id));
+   grid.appendChild(button);
   }
+
+  if(!grid.children.length)throw new Error("No valid tiles found");
+  intro.textContent="Your favourite destinations, all together. Choose a tile to get started.";
+  statusEl.textContent="● HUB READY";
+ }catch(error){
+  console.error("Config loading failed:",error);
+  statusEl.textContent="● CONFIG ERROR";
+  intro.textContent="Could not load config.json. Check the filename, repository root, deployment and JSON syntax, then refresh.";
+ }
 }
 
-function loadSource(item, button) {
-  currentUrl = item.url;
-  frame.src = item.url;
-  document.querySelectorAll(".source").forEach(el => el.classList.remove("active"));
-  if (button) button.classList.add("active");
-  notice.style.display = "block";
+function loadSource(item,button){
+ currentUrl=item.url;
+ frame.src=item.url;
+ document.querySelectorAll(".source").forEach(el=>el.classList.remove("active"));
+ if(button)button.classList.add("active");
+ notice.style.display="block";
 }
 
-function openTile(id) {
-  const item = destinations[id];
-  if (!item) return;
-
-  home.style.display = "none";
-  viewer.style.display = "block";
-  viewerTitle.textContent = item.title;
-  sources.replaceChildren();
-
-  item.urls.forEach((urlItem, index) => {
-    const button = document.createElement("button");
-    button.className = "source";
-    button.textContent = urlItem.label;
-    button.addEventListener("click", () => loadSource(urlItem, button));
-    sources.appendChild(button);
-    if (index === 0) loadSource(urlItem, button);
-  });
-
-  document.getElementById("backBtn").focus();
+function openTile(id){
+ const item=destinations[id];
+ if(!item)return;
+ home.style.display="none";
+ viewer.style.display="block";
+ viewerTitle.textContent=item.title;
+ sources.replaceChildren();
+ item.urls.forEach((urlItem,index)=>{
+  const button=document.createElement("button");
+  button.className="source";
+  button.textContent=urlItem.label;
+  button.addEventListener("click",()=>loadSource(urlItem,button));
+  sources.appendChild(button);
+  if(index===0)loadSource(urlItem,button);
+ });
+ document.getElementById("backBtn").focus();
 }
 
-function goHome() {
-  frame.src = "about:blank";
-  currentUrl = "";
-  viewer.style.display = "none";
-  home.style.display = "block";
-  const first = grid.querySelector("button");
-  if (first) first.focus();
+function goHome(){
+ frame.src="about:blank";
+ currentUrl="";
+ viewer.style.display="none";
+ home.style.display="block";
+ const first=grid.querySelector("button");
+ if(first)first.focus();
 }
 
-document.getElementById("backBtn").addEventListener("click", goHome);
-document.getElementById("reloadBtn").addEventListener("click", () => {
-  if (currentUrl) frame.src = currentUrl;
+effectsToggle.addEventListener("click",()=>{
+ const enabled=document.documentElement.classList.toggle("low-effects");
+ effectsToggle.textContent=enabled?"⚡ Low Effects: ON":"⚡ Low Effects: OFF";
+ effectsToggle.setAttribute("aria-pressed",String(enabled));
 });
-document.getElementById("fullPageBtn").addEventListener("click", () => {
+
+document.getElementById("backBtn").addEventListener("click",goHome);
+document.getElementById("reloadBtn").addEventListener("click",()=>{
+ if(currentUrl)frame.src=currentUrl;
+});
+document.getElementById("fullPageBtn").addEventListener("click",()=>{
+ if(currentUrl)window.location.href=currentUrl;
+});
+
+document.addEventListener("keydown",event=>{
+ if(event.key==="Escape"||event.key==="Backspace"){
+  if(viewer.style.display==="block"){
+   event.preventDefault();
+   goHome();
+  }
+ }
+});
+
+loadConfig();
+</script>
+</body>
+</html>() => {
   if (currentUrl) window.location.href = currentUrl;
 });
 document.addEventListener("keydown", event => {
