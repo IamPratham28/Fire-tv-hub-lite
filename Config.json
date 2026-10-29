@@ -1,0 +1,44 @@
+
+{
+  "version": 2,
+  "maintenance": {
+    "enabled": false,
+    "message": "Back soon!"
+  },
+  "tiles": [
+    {
+      "id": "yt",
+      "title": "YouTube TV",
+      "subtitle": "YouTube on the big screen",
+      "icon": "youtube",
+      "color": "#b91c1c",
+      "urls": [
+        "https://www.youtube.com/tv"
+      ]
+    },
+    {
+      "id": "cricket",
+      "title": "Cricket",
+      "subtitle": "Live scores and match centre",
+      "icon": "cricket",
+      "color": "#15803d",
+      "urls": [
+        "https://www.cricbuzz.com/cricket-match/live-scores",
+        "https://www.espncricinfo.com/live-cricket-score",
+        "https://allrounderlive.in/"
+      ]
+    },
+    {
+      "id": "home",
+      "title": "My Media Server",
+      "subtitle": "Your media websites",
+      "icon": "film",
+      "color": "#0f766e",
+      "urls": [
+        "https://arise-str.vercel.app/",
+        "https://hicine.biz/",
+        "https://watch-v2.autoembed.app/watch/tv"
+      ]
+    }
+  ]
+}
