@@ -1,0 +1,17 @@
+
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.pratham.firetvhub'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.pratham.firetvhub'
+        minSdk 22
+        targetSdk 28
+        versionCode 1
+        versionName '1.0'
+    }
+}
